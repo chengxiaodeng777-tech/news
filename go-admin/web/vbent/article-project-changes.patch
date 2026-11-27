@@ -1,0 +1,63 @@
+diff --git a/internal/service/system/article_service.go b/internal/service/system/article_service.go
+--- a/internal/service/system/article_service.go
++++ b/internal/service/system/article_service.go
+@@ -92,10 +92,17 @@ func (s *Service) ListPublishedArticles(ctx context.Context, q systemmodel.Pag
+ }
+ 
+-// Keep category grouping and ascending order except for CDN news.
++// Sort CDN news by priority and CDN help by publication time within each category.
+ func orderArticles(s *sql.Selector) {
+ 	s.OrderBy(s.C(article.FieldCategory))
+ 	s.OrderExpr(sql.ExprFunc(func(b *sql.Builder) {
+ 		b.WriteString("CASE WHEN ").Ident(s.C(article.FieldCategory)).WriteString(" = ").Arg("cdn新闻")
+-		b.WriteString(" THEN -").Ident(s.C(article.FieldSort)).WriteString(" ELSE ").Ident(s.C(article.FieldSort)).WriteString(" END ASC")
++		b.WriteString(" THEN -").Ident(s.C(article.FieldSort))
++		b.WriteString(" WHEN ").Ident(s.C(article.FieldCategory)).WriteString(" = ").Arg("cdn帮助")
++		b.WriteString(" THEN NULL ELSE ").Ident(s.C(article.FieldSort)).WriteString(" END ASC")
++	}))
++	s.OrderExpr(sql.ExprFunc(func(b *sql.Builder) {
++		b.WriteString("CASE WHEN ").Ident(s.C(article.FieldCategory)).WriteString(" = ").Arg("cdn帮助")
++		b.WriteString(" THEN ").Ident(s.C(article.FieldCreatedAt)).WriteString(" END DESC")
+ 	}))
++	s.OrderBy(sql.Desc(s.C(article.FieldID)))
+ }
+diff --git a/internal/service/system/article_service_test.go b/internal/service/system/article_service_test.go
+--- a/internal/service/system/article_service_test.go
++++ b/internal/service/system/article_service_test.go
+@@ -15,8 +15,8 @@ func TestOrderArticles(t *testing.T) {
+ 	orderArticles(selector)
+ 	selector.Limit(1).Offset(1)
+ 	query, args := selector.Query()
+-	want := `SELECT * FROM "article" ORDER BY "article"."category", CASE WHEN "article"."category" = $1 THEN -"article"."sort" ELSE "article"."sort" END ASC LIMIT 1 OFFSET 1`
+-	if query != want || !reflect.DeepEqual(args, []any{"cdn新闻"}) {
++	want := `SELECT * FROM "article" ORDER BY "article"."category", CASE WHEN "article"."category" = $1 THEN -"article"."sort" WHEN "article"."category" = $2 THEN NULL ELSE "article"."sort" END ASC, CASE WHEN "article"."category" = $3 THEN "article"."created_at" END DESC, "article"."id" DESC LIMIT 1 OFFSET 1`
++	if query != want || !reflect.DeepEqual(args, []any{"cdn新闻", "cdn帮助", "cdn帮助"}) {
+ 		t.Fatalf("unexpected article ordering: %s %v", query, args)
+ 	}
+ }
+diff --git a/website/news.html b/website/news.html
+--- a/website/news.html
++++ b/website/news.html
+@@ -296,7 +296,8 @@
+             Array.from(node.attributes).forEach(function (attribute) {
+                 var name = attribute.name;
+                 var safe = ['href', 'src', 'alt', 'title', 'colspan', 'rowspan'].includes(name);
+-                if ((name === 'href' || name === 'src') && !/^https?:$/i.test(new URL(attribute.value, api).protocol)) safe = false;
++                var dataImage = node.tagName === 'IMG' && name === 'src' && /^data:image\/(?:png|jpe?g|gif|webp|avif|bmp);base64,[a-z0-9+/]+=*$/i.test(attribute.value);
++                if ((name === 'href' || name === 'src') && !dataImage && !/^https?:$/i.test(new URL(attribute.value, api).protocol)) safe = false;
+                 if (!safe) node.removeAttribute(name);
+             });
+             ['href', 'src'].forEach(function (name) {
+diff --git a/website/news-sync.js b/website/news-sync.js
+--- a/website/news-sync.js
++++ b/website/news-sync.js
+@@ -81,7 +81,8 @@
+             Array.from(node.attributes).forEach(function (attribute) {
+                 var name = attribute.name;
+                 var safe = ['href', 'src', 'alt', 'title', 'colspan', 'rowspan'].includes(name);
+-                if ((name === 'href' || name === 'src') && !/^https?:$/i.test(new URL(attribute.value, api).protocol)) safe = false;
++                var dataImage = node.tagName === 'IMG' && name === 'src' && /^data:image\/(?:png|jpe?g|gif|webp|avif|bmp);base64,[a-z0-9+/]+=*$/i.test(attribute.value);
++                if ((name === 'href' || name === 'src') && !dataImage && !/^https?:$/i.test(new URL(attribute.value, api).protocol)) safe = false;
+                 if (!safe) node.removeAttribute(name);
+             });
+             ['href', 'src'].forEach(function (name) {

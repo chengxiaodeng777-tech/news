@@ -1,0 +1,1 @@
+import{fn as e}from"../jse/index-index-DjwYEQvf.js";import{n as t}from"./SizeContext-BYym3ig9.js";function n(n){let r=t();return e(()=>{var e;return n?typeof n==`object`?(e=n.value)==null?r.value:e:typeof n==`function`?n(r.value):r.value:r.value})}export{n as t};

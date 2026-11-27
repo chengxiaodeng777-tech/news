@@ -1,0 +1,1 @@
+import{Dn as e,Hn as t,Sn as n,fn as r}from"../jse/index-index-DEuDlylZ.js";var i=Symbol(`SizeContext`),a=()=>e(i,r(()=>void 0)),o=n((e,{slots:n})=>{let o=a();return t(i,r(()=>(e==null?void 0:e.size)||o.value)),()=>{var e;return n==null||(e=n.default)==null?void 0:e.call(n)}},{props:{size:{type:[String,null],required:!1}}});function s(e){t(i,e)}export{a as n,s as r,o as t};

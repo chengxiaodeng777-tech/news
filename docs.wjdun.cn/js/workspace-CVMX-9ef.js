@@ -1,0 +1,1 @@
+import{Rn as e,Sn as t,Vn as n,gn as r}from"../jse/index-index-DEuDlylZ.js";import{a as i}from"./vue-router-CbPxOCl9.js";var a={class:`p-5 text-sm text-gray-500`},o=t({__name:`index`,setup(t){let o=i();return e(()=>{o.replace(`/dashboard/monitor`)}),(e,t)=>(n(),r(`div`,a,`正在跳转到系统监控首页...`))}});export{o as default};

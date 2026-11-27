@@ -1,0 +1,1 @@
+import{On as e,sn as t}from"../jse/index-index-DjwYEQvf.js";function n(n){return e(n)&&n.type===t}export{n as t};

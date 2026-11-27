@@ -1,0 +1,1 @@
+import{Hn as e}from"../jse/index-index-DEuDlylZ.js";import"./useMergeSemantic-FFN5vBYJ.js";function t(){}var n=Symbol(`WarningContext`);function r(t){e(n,t)}var i=()=>{let e=()=>{};return e.deprecated=t,e};export{r as n,i as t};

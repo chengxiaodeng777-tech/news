@@ -1,0 +1,46 @@
+/* Keep editor surfaces in sync with the app, including menus outside the editor. */
+.editor-shell,
+.w-e-modal {
+  --w-e-textarea-bg-color: hsl(var(--background));
+  --w-e-textarea-color: hsl(var(--foreground));
+  --w-e-textarea-border-color: hsl(var(--border));
+  --w-e-textarea-slight-border-color: hsl(var(--border));
+  --w-e-textarea-slight-color: hsl(var(--muted-foreground));
+  --w-e-textarea-slight-bg-color: hsl(var(--muted));
+  --w-e-textarea-selected-border-color: hsl(var(--primary) / 45%);
+  --w-e-textarea-handler-bg-color: hsl(var(--primary));
+  --w-e-toolbar-color: hsl(var(--foreground));
+  --w-e-toolbar-bg-color: hsl(var(--background));
+  --w-e-toolbar-active-color: hsl(var(--primary));
+  --w-e-toolbar-active-bg-color: hsl(var(--accent));
+  --w-e-toolbar-disabled-color: hsl(var(--muted-foreground));
+  --w-e-toolbar-border-color: hsl(var(--border));
+  --w-e-modal-button-bg-color: hsl(var(--muted));
+  --w-e-modal-button-border-color: hsl(var(--border));
+}
+
+.editor-shell {
+  overflow: hidden;
+  color: hsl(var(--foreground));
+  background: hsl(var(--background));
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+}
+
+.editor-shell:focus-within {
+  border-color: hsl(var(--primary));
+}
+
+.editor-shell .w-e-toolbar {
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+.editor-shell .w-e-bar-item button:focus-visible {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: -2px;
+}
+
+.editor-shell .w-e-bar-item button.active svg,
+.editor-shell .w-e-bar-item button:not(.disabled):hover svg {
+  fill: var(--w-e-toolbar-active-color);
+}

@@ -1,0 +1,22 @@
+# Local dependencies and caches
+**/node_modules/
+**/.pnpm-store/
+**/.cache/
+**/.go-cache/
+**/.gocache/
+**/.idea/
+
+# Generated output and release packages
+**/dist/
+**/release/
+**/logs/
+**/*.log
+*.zip
+*.tar.gz
+**/go-admin-linux-amd64
+
+# Runtime configuration and local environment values
+**/configs/config*.yaml
+**/.env
+**/.env.*
+**/.user.ini
